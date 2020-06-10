@@ -21,9 +21,9 @@ router.get('/allPost', (req, res) => {
 });
 
 router.post('/createPost', loginMiddleware, (req, res) => {
-    const { title, body } = req.body;
+    const { title, body, photo } = req.body;
 
-    if (!title || !body) {
+    if (!title || !body || !photo) {
         return res.status(422).json({
             error: true,
             message: 'Oops, please fill all the field.',
@@ -33,6 +33,7 @@ router.post('/createPost', loginMiddleware, (req, res) => {
         const storePost = new Post({
             title,
             body,
+            photo,
             postedBy: req.user,
         });
 
