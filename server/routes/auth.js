@@ -36,11 +36,14 @@ router.post('/login', (req, res) => {
                                 JWT_SECRET
                             );
 
+                            const { _id, name, email } = userCheck;
+
                             return res.status(200).json({
                                 error: false,
                                 message: 'Yay, successfully login.',
                                 data: {
                                     token: token,
+                                    user: { _id, name, email },
                                 },
                             });
                         } else {
