@@ -5,7 +5,7 @@ const loginMiddleware = require('../middleware/loginMiddleware.js');
 const router = express.Router();
 const Post = mongoose.model('Post');
 
-router.get('/allPost', (req, res) => {
+router.get('/allPost', loginMiddleware, (req, res) => {
     Post.find()
         .populate('postedBy', '_id name')
         .then((post) => {
