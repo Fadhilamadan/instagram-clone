@@ -67,4 +67,56 @@ router.get('/myPost', loginMiddleware, (req, res) => {
         });
 });
 
+router.put('/likePost', loginMiddleware, (req, res) => {
+    Post.findByIdAndUpdate(
+        req.body.postId,
+        {
+            $push: { likes: req.user._id },
+        },
+        {
+            new: true,
+        }
+    ).exec((err, result) => {
+        if (err) {
+            return res.status(422).json({
+                error: true,
+                message: 'Oops, cant like this post.',
+                data: err,
+            });
+        } else {
+            return res.status(200).json({
+                error: false,
+                message: 'Yay, successfully like this post.',
+                data: result,
+            });
+        }
+    });
+});
+
+router.put('/unlikePost', loginMiddleware, (req, res) => {
+    Post.findByIdAndUpdate(
+        req.body.postId,
+        {
+            $pull: { likes: req.user._id },
+        },
+        {
+            new: true,
+        }
+    ).exec((err, result) => {
+        if (err) {
+            return res.status(422).json({
+                error: true,
+                message: 'Oops, cant unlike this post.',
+                data: err,
+            });
+        } else {
+            return res.status(200).json({
+                error: false,
+                message: 'Yay, successfully unlike this post.',
+                data: result,
+            });
+        }
+    });
+});
+
 module.exports = router;
