@@ -19,13 +19,13 @@ const NavBar = () => {
     const renderList = () => {
         if (state) {
             return [
-                <li>
+                <li key="profile">
                     <Link to="/profile">Profile</Link>
                 </li>,
-                <li>
+                <li key="create">
                     <Link to="/create">Create</Link>
                 </li>,
-                <li>
+                <li key="logout">
                     <button
                         className="btn waves-effect wave-light"
                         onClick={() => logout()}
@@ -36,10 +36,10 @@ const NavBar = () => {
             ];
         } else {
             return [
-                <li>
+                <li key="login">
                     <Link to="/login">Login</Link>
                 </li>,
-                <li>
+                <li key="register">
                     <Link to="/register">Register</Link>
                 </li>,
             ];
