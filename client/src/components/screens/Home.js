@@ -76,6 +76,35 @@ const Home = () => {
             });
     };
 
+    const createComment = (text, postId) => {
+        fetch('/comment', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('jwt-token'),
+            },
+            body: JSON.stringify({
+                text: text,
+                postId: postId,
+            }),
+        })
+            .then((res) => res.json())
+            .then((result) => {
+                const newData = data.map((item) => {
+                    if (item._id === result._id) {
+                        return result;
+                    } else {
+                        return item;
+                    }
+                });
+
+                setData(newData);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
     return (
         <div className="home">
             {data.map((item) => {
@@ -110,7 +139,22 @@ const Home = () => {
                             <h6>{item.likes.length} likes</h6>
                             <h6>{item.title}</h6>
                             <p>{item.body}</p>
-                            <input type="text" placeholder="add comment" />
+                            {item.comments.map((comment) => {
+                                return (
+                                    <h6 key={comment._id}>
+                                        <span>{comment.postedBy.name}</span>
+                                        <p>{comment.text}</p>
+                                    </h6>
+                                );
+                            })}
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    createComment(e.target[0].value, item._id);
+                                }}
+                            >
+                                <input type="text" placeholder="add comment" />
+                            </form>
                         </div>
                     </div>
                 );
