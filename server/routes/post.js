@@ -7,6 +7,7 @@ const Post = mongoose.model('Post');
 
 router.get('/allPost', loginMiddleware, (req, res) => {
     Post.find()
+        .populate('comments.postedBy', '_id name')
         .populate('postedBy', '_id name')
         .then((post) => {
             return res.status(200).json({
@@ -117,6 +118,40 @@ router.put('/unlikePost', loginMiddleware, (req, res) => {
             });
         }
     });
+});
+
+router.put('/comment', loginMiddleware, (req, res) => {
+    const comment = {
+        text: req.body.text,
+        postedBy: req.user._id,
+    };
+
+    Post.findByIdAndUpdate(
+        req.body.postId,
+        {
+            $push: { comments: comment },
+        },
+        {
+            new: true,
+        }
+    )
+        .populate('comments.postedBy', '_id name')
+        .populate('postedBy', '_id name')
+        .exec((err, result) => {
+            if (err) {
+                return res.status(422).json({
+                    error: true,
+                    message: 'Oops, cant comment this post.',
+                    data: err,
+                });
+            } else {
+                return res.status(200).json({
+                    error: false,
+                    message: 'Yay, successfully comment this post.',
+                    data: result,
+                });
+            }
+        });
 });
 
 module.exports = router;
