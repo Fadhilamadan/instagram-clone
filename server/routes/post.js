@@ -154,4 +154,38 @@ router.put('/comment', loginMiddleware, (req, res) => {
         });
 });
 
+router.delete('/deletePost/:postId', loginMiddleware, (req, res) => {
+    Post.findOne({ _id: req.params.postId })
+        .populate('postedBy', '_id')
+        .exec((err, post) => {
+            if (err) {
+                return res.status(422).json({
+                    error: true,
+                    message: 'Oops, cant delete this post.',
+                    data: err,
+                });
+            } else if (!post) {
+                return res.status(200).json({
+                    error: false,
+                    message: 'Oops, cant find any post.',
+                    data: null,
+                });
+            }
+
+            if (post.postedBy._id.toString() === req.user._id.toString()) {
+                post.remove()
+                    .then((result) => {
+                        return res.status(200).json({
+                            error: false,
+                            message: 'Yay, successfully delete this post.',
+                            data: result,
+                        });
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+            }
+        });
+});
+
 module.exports = router;
