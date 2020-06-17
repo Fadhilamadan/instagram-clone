@@ -21,6 +21,22 @@ router.get('/allPost', loginMiddleware, (req, res) => {
         });
 });
 
+router.get('/followingPost', loginMiddleware, (req, res) => {
+    Post.find({ postedBy: { $in: req.user.following } })
+        .populate('comments.postedBy', '_id name')
+        .populate('postedBy', '_id name')
+        .then((post) => {
+            return res.status(200).json({
+                error: false,
+                message: 'Yay, successfully load all following post.',
+                data: post,
+            });
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+});
+
 router.post('/createPost', loginMiddleware, (req, res) => {
     const { title, body, photo } = req.body;
 
