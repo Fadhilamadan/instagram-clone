@@ -17,5 +17,12 @@ export const reducers = (state, action) => {
         };
     }
 
+    if (action.type === 'UPDATE-PIC') {
+        return {
+            ...state,
+            photo: action.payload,
+        };
+    }
+
     return state;
 };

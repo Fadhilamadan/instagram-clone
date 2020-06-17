@@ -3,6 +3,7 @@ import { UserContext } from '../../App';
 
 const Profile = () => {
     const [myPhotos, setPhotos] = useState([]);
+    const [image, setImage] = useState('');
     const { state, dispatch } = useContext(UserContext);
 
     useEffect(() => {
@@ -22,6 +23,62 @@ const Profile = () => {
             });
     }, []);
 
+    useEffect(() => {
+        if (image) {
+            const data = new FormData();
+            data.append('file', image);
+            data.append('upload_preset', 'instagram-clone');
+            data.append('cloud_name', 'nukucode');
+
+            // upload to cloudinary
+            fetch('https://api.cloudinary.com/v1_1/nukucode/image/upload', {
+                method: 'post',
+                body: data,
+            })
+                .then((res) => res.json())
+                .then((data) => {
+                    fetch('/updatePhoto', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization:
+                                'Bearer ' + localStorage.getItem('jwt-token'),
+                        },
+                        body: JSON.stringify({
+                            photo: data.url,
+                        }),
+                    })
+                        .then((res) => res.json())
+                        .then((result) => {
+                            setPhotos(result.data);
+
+                            localStorage.setItem(
+                                'user',
+                                JSON.stringify({
+                                    ...state,
+                                    photo: result.data.photo,
+                                })
+                            );
+
+                            dispatch({
+                                type: 'UPDATE-PIC',
+                                payload: result.data.photo,
+                            });
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                        });
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    }, [image]);
+
+    const updatePhoto = (photo) => {
+        setImage(photo);
+    };
+
     return (
         <div style={{ maxWidth: '700px', margin: '0px auto' }}>
             <div
@@ -39,7 +96,7 @@ const Profile = () => {
                             height: '160px',
                             borderRadius: '80px',
                         }}
-                        src="https://images.unsplash.com/photo-1506919258185-6078bba55d2a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1115&q=80"
+                        src={state ? state.photo : null}
                         alt="Image"
                     />
                 </div>
@@ -60,6 +117,18 @@ const Profile = () => {
                         <h6 style={{ margin: '10px' }}>
                             {state ? state.following.length : '0'} Following
                         </h6>
+                    </div>
+                    <div className="file-field input-field">
+                        <div className="btn blue">
+                            <span>Update Picture</span>
+                            <input
+                                type="file"
+                                onChange={(e) => updatePhoto(e.target.files[0])}
+                            />
+                        </div>
+                        <div className="file-path-wrapper">
+                            <input className="file-path validate" type="text" />
+                        </div>
                     </div>
                 </div>
             </div>
