@@ -1,6 +1,9 @@
 # Idea
 .idea
 
+# Dev
+config/dev.js
+
 # Logs
 logs
 *.log
