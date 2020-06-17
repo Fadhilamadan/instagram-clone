@@ -42,6 +42,7 @@ router.post('/login', (req, res) => {
                                 email,
                                 following,
                                 followers,
+                                photo,
                             } = userCheck;
 
                             return res.status(200).json({
@@ -55,6 +56,7 @@ router.post('/login', (req, res) => {
                                         email,
                                         following,
                                         followers,
+                                        photo,
                                     },
                                 },
                             });
@@ -81,7 +83,7 @@ router.post('/login', (req, res) => {
 });
 
 router.post('/signup', (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, photo } = req.body;
 
     if (!name || !email || !password) {
         return res.status(422).json({
@@ -105,6 +107,7 @@ router.post('/signup', (req, res) => {
                             name,
                             email,
                             password: hashedPassword,
+                            photo,
                         });
 
                         storeUser

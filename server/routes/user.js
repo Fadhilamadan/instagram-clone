@@ -131,4 +131,33 @@ router.put('/unfollow', loginMiddleware, (req, res) => {
     );
 });
 
+router.put('/updatePhoto', loginMiddleware, (req, res) => {
+    Post.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set: {
+                photo: req.body.photo,
+            },
+        },
+        {
+            new: true,
+        },
+        (err, result) => {
+            if (err) {
+                return res.status(422).json({
+                    error: true,
+                    message: 'Oops, cant update the photo.',
+                    data: err,
+                });
+            } else {
+                return res.status(200).json({
+                    error: false,
+                    message: 'Yay, successfully update the photo.',
+                    data: result,
+                });
+            }
+        }
+    );
+});
+
 module.exports = router;
