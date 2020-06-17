@@ -25,6 +25,9 @@ const NavBar = () => {
                 <li key="create">
                     <Link to="/create">Create</Link>
                 </li>,
+                <li key="myFollowing">
+                    <Link to="/myFollowing">MyFollowing</Link>
+                </li>,
                 <li key="logout">
                     <button
                         className="btn waves-effect wave-light"
