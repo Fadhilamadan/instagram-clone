@@ -1,16 +1,12 @@
-import React, { useState, useContext } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { UserContext } from '../../App';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import M from 'materialize-css';
 
-const Login = () => {
-    const { dispatch } = useContext(UserContext);
-
+const Reset = () => {
     const history = useHistory();
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
 
-    const Login = () => {
+    const Reset = () => {
         if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
             M.toast({
                 html: 'Email not valid',
@@ -20,14 +16,13 @@ const Login = () => {
             return true;
         }
 
-        fetch('/login', {
+        fetch('/reset-password', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 email,
-                password,
             }),
         })
             .then((res) => res.json())
@@ -43,18 +38,7 @@ const Login = () => {
                         classes: '#69f0ae green accent-2',
                     });
 
-                    dispatch({
-                        type: 'USER',
-                        payload: data.data.user,
-                    });
-
-                    localStorage.setItem('jwt-token', data.data.token);
-                    localStorage.setItem(
-                        'user',
-                        JSON.stringify(data.data.user)
-                    );
-
-                    history.push('/');
+                    history.push('/login');
                 }
             })
             .catch((err) => {
@@ -73,28 +57,15 @@ const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                 />
-                <input
-                    type="password"
-                    className="form-control"
-                    placeholder="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
                 <button
                     className="btn waves-effect wave-light"
-                    onClick={() => Login()}
+                    onClick={() => Reset()}
                 >
-                    Login
+                    Reset Password
                 </button>
-                <h5>
-                    <Link to="/register">Dont have an Account?</Link>
-                </h5>
-                <h6>
-                    <Link to="/reset-password">Reset Password</Link>
-                </h6>
             </div>
         </div>
     );
 };
 
-export default Login;
+export default Reset;

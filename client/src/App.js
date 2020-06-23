@@ -10,6 +10,8 @@ import Profile from './components/screens/Profile';
 import CreatePost from './components/screens/CreatePost';
 import UserProfile from './components/screens/UserProfile';
 import FollowingPost from './components/screens/FollowingPost';
+import Reset from './components/screens/Reset';
+import NewPassword from './components/screens/NewPassword';
 import { reducers, initialState } from './reducers/userReducer';
 
 export const UserContext = createContext();
@@ -27,7 +29,9 @@ const Routing = () => {
                 payload: user,
             });
         } else {
-            history.push('/login');
+            if (!history.location.pathname.startsWith('/reset-password')) {
+                history.push('/login');
+            }
         }
     }, []);
 
@@ -53,6 +57,12 @@ const Routing = () => {
             </Route>
             <Route path="/myFollowing">
                 <FollowingPost />
+            </Route>
+            <Route exact path="/reset-password">
+                <Reset />
+            </Route>
+            <Route path="/reset-password/:token">
+                <NewPassword />
             </Route>
         </Switch>
     );
