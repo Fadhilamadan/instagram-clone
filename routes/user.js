@@ -160,4 +160,21 @@ router.put('/updatePhoto', loginMiddleware, (req, res) => {
     );
 });
 
+router.post('/search-users', (req, res) => {
+    let userPattern = new RegExp('^' + req.body.query);
+
+    User.find({ email: { $regex: userPattern } })
+        .select('_id email')
+        .then((user) => {
+            return res.status(200).json({
+                error: false,
+                message: 'Yay, successfully load data.',
+                data: user,
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+});
+
 module.exports = router;
